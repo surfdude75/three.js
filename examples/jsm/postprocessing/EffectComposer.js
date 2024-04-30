@@ -50,6 +50,27 @@ class EffectComposer {
 
 		this.clock = new Clock();
 
+		this.onSessionStateChange = this.onSessionStateChange.bind( this );
+		this.renderer.xr.addEventListener( 'sessionstart', this.onSessionStateChange );
+		this.renderer.xr.addEventListener( 'sessionend', this.onSessionStateChange );
+
+	}
+
+	onSessionStateChange() {
+
+
+
+		const size = new Vector2();
+
+		this.renderer.getSize( size );
+		console.log( 'DEBUG onSessionStateChange', size );
+		this._width = size.width;
+		this._height = size.height;
+
+		this._pixelRatio = this.renderer.xr.isPresenting ? 1 : this.renderer.getPixelRatio();
+
+		this.setSize( this._width, this._height );
+
 	}
 
 	swapBuffers() {
@@ -223,6 +244,8 @@ class EffectComposer {
 		this.renderTarget2.dispose();
 
 		this.copyPass.dispose();
+		this.renderer.xr.removeEventListener( 'sessionstart', this.onSessionStateChange );
+		this.renderer.xr.removeEventListener( 'sessionend', this.onSessionStateChange );
 
 	}
 

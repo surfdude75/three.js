@@ -385,9 +385,13 @@ class WebGLRenderer {
 
 		this.setSize = function ( width, height, updateStyle = true ) {
 
+			console.log( 'SETSIZE', width, height, updateStyle );
+
 			if ( xr.isPresenting ) {
 
 				console.warn( 'THREE.WebGLRenderer: Can\'t change size while VR device is presenting.' );
+				const err = new Error();
+				console.log( err.stack );
 				return;
 
 			}
@@ -2182,6 +2186,12 @@ class WebGLRenderer {
 
 		this.setRenderTarget = function ( renderTarget, activeCubeFace = 0, activeMipmapLevel = 0 ) {
 
+			if ( renderTarget === null && this.xr.isPresenting ) {
+
+				renderTarget = this.xr._getRenderTarget();
+
+			}
+
 			_currentRenderTarget = renderTarget;
 			_currentActiveCubeFace = activeCubeFace;
 			_currentActiveMipmapLevel = activeMipmapLevel;
@@ -2254,6 +2264,7 @@ class WebGLRenderer {
 
 				}
 
+				console.log( 'viewport', renderTarget.viewport );
 				_currentViewport.copy( renderTarget.viewport );
 				_currentScissor.copy( renderTarget.scissor );
 				_currentScissorTest = renderTarget.scissorTest;

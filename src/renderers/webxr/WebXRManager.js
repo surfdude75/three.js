@@ -241,6 +241,12 @@ class WebXRManager extends EventDispatcher {
 
 		};
 
+		this._getRenderTarget = function () {
+
+			return newRenderTarget;
+
+		};
+
 		this.getFrame = function () {
 
 			return xrFrame;
@@ -357,6 +363,9 @@ class WebXRManager extends EventDispatcher {
 
 				customReferenceSpace = null;
 				referenceSpace = await session.requestReferenceSpace( referenceSpaceType );
+
+				// currentPixelRatio = renderer.getPixelRatio();
+				// renderer.getSize( currentSize );
 
 				animation.setContext( session );
 				animation.start();
@@ -723,6 +732,8 @@ class WebXRManager extends EventDispatcher {
 						}
 
 					}
+
+					console.log( 'viewport2', viewport );
 
 					let camera = cameras[ i ];
 

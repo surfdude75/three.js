@@ -74,7 +74,10 @@ class FullScreenQuad {
 
 	render( renderer ) {
 
+		const xrEnabled = renderer.xr.enabled;
+		renderer.xr.enabled = false;
 		renderer.render( this._mesh, _camera );
+		renderer.xr.enabled = xrEnabled;
 
 	}
 
