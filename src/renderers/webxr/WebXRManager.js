@@ -733,8 +733,6 @@ class WebXRManager extends EventDispatcher {
 
 					}
 
-					console.log( 'viewport2', viewport );
-
 					let camera = cameras[ i ];
 
 					if ( camera === undefined ) {

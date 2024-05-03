@@ -2264,7 +2264,6 @@ class WebGLRenderer {
 
 				}
 
-				console.log( 'viewport', renderTarget.viewport );
 				_currentViewport.copy( renderTarget.viewport );
 				_currentScissor.copy( renderTarget.scissor );
 				_currentScissorTest = renderTarget.scissorTest;
