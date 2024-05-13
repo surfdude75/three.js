@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const REVISION = '164';
+const REVISION = '165dev';
 
 const MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2 };
 const TOUCH = { ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3 };
@@ -26715,6 +26715,12 @@ class WebXRManager extends EventDispatcher {
 
 		};
 
+		this._getRenderTarget = function () {
+
+			return newRenderTarget;
+
+		};
+
 		this.getFrame = function () {
 
 			return xrFrame;
@@ -26831,6 +26837,9 @@ class WebXRManager extends EventDispatcher {
 
 				customReferenceSpace = null;
 				referenceSpace = await session.requestReferenceSpace( referenceSpaceType );
+
+				// currentPixelRatio = renderer.getPixelRatio();
+				// renderer.getSize( currentSize );
 
 				animation.setContext( session );
 				animation.start();
@@ -28600,9 +28609,13 @@ class WebGLRenderer {
 
 		this.setSize = function ( width, height, updateStyle = true ) {
 
+			console.log( 'SETSIZE', width, height, updateStyle );
+
 			if ( xr.isPresenting ) {
 
 				console.warn( 'THREE.WebGLRenderer: Can\'t change size while VR device is presenting.' );
+				const err = new Error();
+				console.log( err.stack );
 				return;
 
 			}
@@ -30396,6 +30409,12 @@ class WebGLRenderer {
 		};
 
 		this.setRenderTarget = function ( renderTarget, activeCubeFace = 0, activeMipmapLevel = 0 ) {
+
+			if ( renderTarget === null && this.xr.isPresenting ) {
+
+				renderTarget = this.xr._getRenderTarget();
+
+			}
 
 			_currentRenderTarget = renderTarget;
 			_currentActiveCubeFace = activeCubeFace;
@@ -43503,6 +43522,10 @@ class FileLoader extends Loader {
 
 									}
 
+								}, ( e ) => {
+
+									controller.error( e );
+
 								} );
 
 							}
@@ -50996,13 +51019,15 @@ function ascSort( a, b ) {
 
 function intersect( object, raycaster, intersects, recursive ) {
 
+	let stopTraversal = false;
+
 	if ( object.layers.test( raycaster.layers ) ) {
 
-		object.raycast( raycaster, intersects );
+		stopTraversal = object.raycast( raycaster, intersects );
 
 	}
 
-	if ( recursive === true ) {
+	if ( recursive === true && stopTraversal !== true ) {
 
 		const children = object.children;
 
